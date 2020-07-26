@@ -1,0 +1,3 @@
+/mnt/simulations/detectorlab/software/OPPAC_simulation/build/simu_x-2800_y2400
+/mnt/simulations/detectorlab/software/OPPAC_simulation/build/simu_x-2800_y-2400
+

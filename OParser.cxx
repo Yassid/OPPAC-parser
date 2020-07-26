@@ -13,7 +13,7 @@ herr_t parse_sim_to_h5(
 {
 
 	//SiPM X-Y matrix
-	double3 histgrid(boost::extents[map.size()][diodes.size()][1000]);
+	double3 histgrid(boost::extents[1000][map.size()][diodes.size()]);
 	std::fill_n(histgrid.data(), histgrid.num_elements(), 0);
 	std::size_t file_cnt =0;
 	std::vector<int> events;
@@ -52,11 +52,14 @@ herr_t parse_sim_to_h5(
 						 for (std::size_t k=0; k<sipm_buffer.size(); k++){
 							//std::cout<< sipm_buffer.size()<<"	"<<sipmcnt <<"\n";
 							//assert(sipm_buffer.size()==(diodes.size()*4));
-							histgrid[file_cnt][k][evt_num] = sipm_buffer[k];
+							histgrid[evt_num][file_cnt][k] = sipm_buffer[k];
+							//std::cout<<sipm_buffer[k]<<" , ";
 					
 						 }// SiPM loop (k)
 
-						++evt_num;
+						  //std::cout<<"\n";
+
+						 ++evt_num;
 
 						 sipm_buffer.clear();
 						 sipmcnt = 0;
@@ -75,6 +78,8 @@ herr_t parse_sim_to_h5(
 
 		}//file map
 
+
+
 		    return write_h5(hdf_output_filename,map,xpos,ypos,histgrid,diodes,events);
 	
 
@@ -92,16 +97,16 @@ herr_t write_h5(
   
 	std::cout<<histgrid.shape()[2]<<"	"<<events.size()<<"\n";
 
-  assert(histgrid.shape()[0] == map.size());
-  assert(histgrid.shape()[1] == diodes.size());
-  assert(histgrid.shape()[2] == events.size()-1);
+  assert(histgrid.shape()[0] == events.size()-1);
+  assert(histgrid.shape()[1] == map.size());
+  assert(histgrid.shape()[2] == diodes.size());
 
   const hsize_t xpos_dims[1] = {xpos.size()};
   const hsize_t ypos_dims[1] = {ypos.size()};
   const hsize_t num_diodes_dims[1] = {diodes.size()};
   const hsize_t events_dims[1] = {events.size()};
   const hsize_t files_dims[1] = {map.size()};
-  const hsize_t histgrid_dims[3] = {files_dims[0], num_diodes_dims[0],events_dims[0]};
+  const hsize_t histgrid_dims[3] = {events_dims[0],files_dims[0],num_diodes_dims[0]};
 
   std::cout<<files_dims[1]<<"	"<<xpos_dims[0]<<"	"<<ypos_dims[0]<<"	"<<num_diodes_dims[0]<<"	"<<events_dims[0]<<"\n";
 
